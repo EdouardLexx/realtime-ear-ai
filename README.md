@@ -63,7 +63,11 @@ EAR Calculation
 
 The core logic resides in the eye_aspect_ratio function, which computes the EAR based on the Euclidean distances between the six eye landmarks (P1 to P6).
 
-<img width="470" height="126" alt="image" src="https://github.com/user-attachments/assets/83c412fa-0d53-4ee6-9eae-55ebbda486fa" />
+<img width="523" height="131" alt="image" src="https://github.com/user-attachments/assets/84af2995-3345-4191-8fed-07d102c6ec48" />
+
+<img width="440" height="296" alt="Screenshot from 2025-10-07 15-14-08" src="https://github.com/user-attachments/assets/fe7bf6a1-f62e-4736-a740-862db2e777d1" />
+
+
 
     ∥p2​−p6​∥ and ∥p3​−p5​∥ represent the vertical distances.
 
