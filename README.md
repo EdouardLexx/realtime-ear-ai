@@ -7,8 +7,6 @@ This code uses Mediapipe and Computer Vision to accurately estimate the eye open
 
 This Python project implements a robust solution for quantifying eye openness from an image. It leverages Mediapipe's Face Mesh model for highly precise facial landmark detection and applies the Eye Aspect Ratio (EAR) calculation to determine the "percentage of openness" for both the left and right eyes.
 
-This technique is widely used in applications like drowsiness detection, attention monitoring, and human-computer interaction.
-
 ✨ Features
 
     Real-time Landmark Detection: Utilizes Mediapipe for high-fidelity detection of the 6 key facial landmarks surrounding each eye.
@@ -45,12 +43,6 @@ pip install opencv-python numpy mediapipe
 
 git clone https://github.com/YourUsername/eye-openness-detection-ai.git
 cd eye-openness-detection-ai
-
-Update the image path:
-Open the Python script and change the image_path variable to point to your image file:
-Python
-
-image_path = "path/to/your/image.jpg"
 
 Execute the script:
 Bash
