@@ -76,7 +76,8 @@ MAX_EAR	0.35	The EAR value considered as 100% open (can be tuned).
 CLOSED_EYE_THRESHOLD	0.15	The EAR value below which the eye is considered 0% open.
 
 The final percentage is calculated as: min(MAX_EAREAR​×100,100)
-When you run the code you can see for exemple : 
+
+Here’s what you can expect when running the script:
 <img width="1251" height="915" alt="image" src="https://github.com/user-attachments/assets/325b81e2-8745-45dc-89e1-92ddb7791797" />
 <img width="1251" height="915" alt="image" src="https://github.com/user-attachments/assets/ef709b00-0cce-489a-9d2c-1582167f68d4" />
 
