@@ -62,6 +62,7 @@ Bash
 EAR Calculation
 
 The core logic resides in the eye_aspect_ratio function, which computes the EAR based on the Euclidean distances between the six eye landmarks (P1 to P6).
+
 <img width="470" height="126" alt="image" src="https://github.com/user-attachments/assets/83c412fa-0d53-4ee6-9eae-55ebbda486fa" />
 
     ∥p2​−p6​∥ and ∥p3​−p5​∥ represent the vertical distances.
