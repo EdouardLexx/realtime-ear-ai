@@ -62,7 +62,7 @@ Bash
 EAR Calculation
 
 The core logic resides in the eye_aspect_ratio function, which computes the EAR based on the Euclidean distances between the six eye landmarks (P1 to P6).
-EAR=2⋅∥p1​−p4​∥∥p2​−p6​∥+∥p3​−p5​∥​
+<img width="470" height="126" alt="image" src="https://github.com/user-attachments/assets/83c412fa-0d53-4ee6-9eae-55ebbda486fa" />
 
     ∥p2​−p6​∥ and ∥p3​−p5​∥ represent the vertical distances.
 
@@ -76,3 +76,7 @@ MAX_EAR	0.35	The EAR value considered as 100% open (can be tuned).
 CLOSED_EYE_THRESHOLD	0.15	The EAR value below which the eye is considered 0% open.
 
 The final percentage is calculated as: min(MAX_EAREAR​×100,100)
+When you run the code you can see for exemple : 
+<img width="1251" height="915" alt="image" src="https://github.com/user-attachments/assets/325b81e2-8745-45dc-89e1-92ddb7791797" />
+<img width="1251" height="915" alt="image" src="https://github.com/user-attachments/assets/ef709b00-0cce-489a-9d2c-1582167f68d4" />
+
