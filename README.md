@@ -3,11 +3,11 @@ AI-powered Computer Vision project to calculate the percentage of eye opening (E
 
 This code uses Mediapipe and Computer Vision to accurately estimate the eye openness percentage based on the Eye Aspect Ratio (EAR) metric.
 
-💡 Overview
+Overview :
 
 This Python project implements a robust solution for quantifying eye openness from an image. It leverages Mediapipe's Face Mesh model for highly precise facial landmark detection and applies the Eye Aspect Ratio (EAR) calculation to determine the "percentage of openness" for both the left and right eyes.
 
-✨ Features
+Features :
 
     Real-time Landmark Detection: Utilizes Mediapipe for high-fidelity detection of the 6 key facial landmarks surrounding each eye.
 
@@ -19,7 +19,7 @@ This Python project implements a robust solution for quantifying eye openness fr
 
     Debug Output: Prints detailed coordinate and calculation values (A, B, C distances) to the console for verification and analysis.
 
-⚙️ Prerequisites
+Prerequisites :
 
 You need the following libraries to run the script:
 
@@ -36,7 +36,7 @@ Bash
 
 pip install opencv-python numpy mediapipe
 
-🚀 How to Run
+How to Run :
 
     Clone the repository:
     Bash
@@ -49,7 +49,7 @@ Bash
 
     python your_script_name.py 
 
-🛠️ Key Technical Details
+Key Technical Details :
 
 EAR Calculation
 
