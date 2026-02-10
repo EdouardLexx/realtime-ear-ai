@@ -90,18 +90,43 @@ CREATE TABLE IF NOT EXISTS Mesures (
     rythme_cardiaque  INT NOT NULL,
     alerte_visuelle   BOOLEAN NOT NULL DEFAULT 0,
     alerte_sonore     BOOLEAN NOT NULL DEFAULT 0,
+    angle_volant      FLOAT,
+    force_volant      FLOAT,
     FOREIGN KEY (id_trajet) REFERENCES Trajets(id_trajet)
 );
 """
 
+# Migration: add the two steering-wheel sensor columns if the table
+# already exists but was created before these columns were defined.
+ALTER_MESURES_ANGLE = (
+    "ALTER TABLE Mesures ADD COLUMN angle_volant FLOAT AFTER alerte_sonore;"
+)
+ALTER_MESURES_FORCE = (
+    "ALTER TABLE Mesures ADD COLUMN force_volant FLOAT AFTER angle_volant;"
+)
+
 
 def ensure_tables():
-    """Create the three tables if they don't already exist."""
+    """Create the three tables if they don't already exist.
+
+    Also runs ALTER TABLE migrations to add steering-wheel sensor columns
+    (angle_volant, force_volant) on databases created before this update.
+    """
     connection = get_connection()
     try:
         cursor = connection.cursor()
         for ddl in (CREATE_CONDUCTEURS, CREATE_TRAJETS, CREATE_MESURES):
             cursor.execute(ddl)
+        # Migration: add new columns if missing (idempotent).
+        for alter in (ALTER_MESURES_ANGLE, ALTER_MESURES_FORCE):
+            try:
+                cursor.execute(alter)
+            except Error as e:
+                # MySQL/MariaDB error 1060 = "Duplicate column name"
+                if e.errno == 1060:
+                    pass  # column already exists — expected
+                else:
+                    raise
         connection.commit()
         cursor.close()
         print("✅ Tables vérifiées / créées.")
@@ -176,7 +201,7 @@ def bulk_insert_mesures(rows):
 
     *rows* is a list of tuples:
         (id_trajet, temps_ms, ouverture_oeil, rythme_cardiaque,
-         alerte_visuelle, alerte_sonore)
+         alerte_visuelle, alerte_sonore, angle_volant, force_volant)
     """
     if not rows:
         return
@@ -186,8 +211,8 @@ def bulk_insert_mesures(rows):
         cursor.executemany(
             "INSERT INTO Mesures "
             "(id_trajet, temps_ms, ouverture_oeil, rythme_cardiaque, "
-            " alerte_visuelle, alerte_sonore) "
-            "VALUES (%s, %s, %s, %s, %s, %s);",
+            " alerte_visuelle, alerte_sonore, angle_volant, force_volant) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
             rows,
         )
         connection.commit()
@@ -212,7 +237,7 @@ def generate_measurement(t_ms, state):
 
     Returns:
         (temps_ms, ouverture_oeil, rythme_cardiaque,
-         alerte_visuelle, alerte_sonore)
+         alerte_visuelle, alerte_sonore, angle_volant, force_volant)
     """
     # --- Eye openness ---
     # Base: normal driving ≈ 70‑95 %
@@ -252,7 +277,29 @@ def generate_measurement(t_ms, state):
     alerte_visuelle = 1 if eyes_closed_long else 0
     alerte_sonore = 1 if eyes_closed_long else 0
 
-    return (t_ms, ouverture, rythme_cardiaque, alerte_visuelle, alerte_sonore)
+    # --- Steering wheel angle (potentiometer) ---
+    # Simulates normal driving: smooth turns with slow sinusoidal drift
+    # (-540 to +540 degree range for a real wheel, but typical driving
+    # stays within +/-90 degrees).  Drowsiness -> drift increases.
+    base_angle = 15.0 * math.sin(t_ms / 8000.0) + 8.0 * math.sin(t_ms / 20000.0)
+    if state.get("drowsy_remaining", 0) > 0:
+        # Drowsy: steering drifts more
+        base_angle += random.gauss(0, 12)
+    else:
+        base_angle += random.gauss(0, 3)
+    angle_volant = round(max(-540.0, min(540.0, base_angle)), 1)
+
+    # --- Steering wheel grip force (strain gauge / Wheatstone bridge) ---
+    # Expressed in Newtons.  Normal grip ≈ 10‑30 N.
+    # Drowsiness → grip loosens (force drops).
+    if state.get("drowsy_remaining", 0) > 0:
+        force = random.gauss(5, 3)   # weak grip during drowsiness
+    else:
+        force = random.gauss(20, 4)  # normal grip
+    force_volant = round(max(0.0, min(80.0, force)), 1)
+
+    return (t_ms, ouverture, rythme_cardiaque, alerte_visuelle, alerte_sonore,
+            angle_volant, force_volant)
 
 
 # ---------------------------------------------------------------------------
@@ -305,17 +352,23 @@ def _print_summary(mesures):
 
     Each element of *mesures* is a tuple:
         (id_trajet, temps_ms, ouverture_oeil, rythme_cardiaque,
-         alerte_visuelle, alerte_sonore)
+         alerte_visuelle, alerte_sonore, angle_volant, force_volant)
     """
     ouvertures = [m[2] for m in mesures]  # index 2 = ouverture_oeil
     hrs = [m[3] for m in mesures]         # index 3 = rythme_cardiaque
     alertes = sum(1 for m in mesures if m[4])  # index 4 = alerte_visuelle
+    angles = [m[6] for m in mesures]      # index 6 = angle_volant
+    forces = [m[7] for m in mesures]      # index 7 = force_volant
 
     print(f"\n📈 Résumé :")
     print(f"   Ouverture yeux  — min: {min(ouvertures):.1f}%  "
           f"max: {max(ouvertures):.1f}%  moy: {sum(ouvertures)/len(ouvertures):.1f}%")
     print(f"   Rythme cardiaque — min: {min(hrs)} bpm  "
           f"max: {max(hrs)} bpm  moy: {sum(hrs)/len(hrs):.0f} bpm")
+    print(f"   Angle volant    — min: {min(angles):.1f}°  "
+          f"max: {max(angles):.1f}°  moy: {sum(angles)/len(angles):.1f}°")
+    print(f"   Force volant    — min: {min(forces):.1f} N  "
+          f"max: {max(forces):.1f} N  moy: {sum(forces)/len(forces):.1f} N")
     print(f"   Alertes déclenchées : {alertes} mesure(s)")
 
 
@@ -365,9 +418,10 @@ def run_live(duration_s=60):
             all_mesures.append((tid, *row))
 
             # Terminal feedback
-            _, _, ouv, hr, av, aso = (tid, *row)
+            _, _, ouv, hr, av, aso, ang, frc = (tid, *row)
             alert_flag = " 🚨 ALERTE" if av else ""
-            print(f"   t={s:>4}s  |  👁️  {ouv:>5.1f}%  |  ❤️  {hr:>3} bpm{alert_flag}")
+            print(f"   t={s:>4}s  |  👁️  {ouv:>5.1f}%  |  ❤️  {hr:>3} bpm  "
+                  f"|  🔄 {ang:>6.1f}°  |  ✊ {frc:>4.1f} N{alert_flag}")
 
             # Flush every FLUSH_INTERVAL_S seconds
             if (s + 1) % FLUSH_INTERVAL_S == 0:
