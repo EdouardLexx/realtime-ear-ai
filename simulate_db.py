@@ -21,6 +21,10 @@ from datetime import date, datetime, timedelta
 
 import mysql.connector
 from mysql.connector import Error
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # ---------------------------------------------------------------------------
@@ -62,7 +66,7 @@ def get_connection():
 # ---------------------------------------------------------------------------
 
 CREATE_CONDUCTEURS = """
-CREATE TABLE IF NOT EXISTS Conducteurs (
+CREATE TABLE IF NOT EXISTS conducteurs (
     id_conducteur INT AUTO_INCREMENT PRIMARY KEY,
     nom           VARCHAR(100) NOT NULL,
     prenom        VARCHAR(100),
@@ -71,18 +75,18 @@ CREATE TABLE IF NOT EXISTS Conducteurs (
 """
 
 CREATE_TRAJETS = """
-CREATE TABLE IF NOT EXISTS Trajets (
+CREATE TABLE IF NOT EXISTS trajets (
     id_trajet      INT AUTO_INCREMENT PRIMARY KEY,
     id_conducteur  INT NOT NULL,
     debut_log      DATETIME NOT NULL,
     fin_log        DATETIME,
     commentaire    TEXT,
-    FOREIGN KEY (id_conducteur) REFERENCES Conducteurs(id_conducteur)
+    FOREIGN KEY (id_conducteur) REFERENCES conducteurs(id_conducteur)
 );
 """
 
 CREATE_MESURES = """
-CREATE TABLE IF NOT EXISTS Mesures (
+CREATE TABLE IF NOT EXISTS mesures (
     id_mesure         INT AUTO_INCREMENT PRIMARY KEY,
     id_trajet         INT NOT NULL,
     temps_ms          INT NOT NULL,
@@ -90,23 +94,16 @@ CREATE TABLE IF NOT EXISTS Mesures (
     rythme_cardiaque  INT NOT NULL,
     alerte_visuelle   BOOLEAN NOT NULL DEFAULT 0,
     alerte_sonore     BOOLEAN NOT NULL DEFAULT 0,
-    FOREIGN KEY (id_trajet) REFERENCES Trajets(id_trajet)
+    FOREIGN KEY (id_trajet) REFERENCES trajets(id_trajet)
 );
 """
 
 
 def ensure_tables():
     """Create the three tables if they don't already exist."""
-    connection = get_connection()
-    try:
-        cursor = connection.cursor()
-        for ddl in (CREATE_CONDUCTEURS, CREATE_TRAJETS, CREATE_MESURES):
-            cursor.execute(ddl)
-        connection.commit()
-        cursor.close()
-        print("✅ Tables vérifiées / créées.")
-    finally:
-        connection.close()
+    # Tables already exist in the database, skip creation
+    print("✅ Utilisation des tables existantes.")
+    return
 
 
 # ---------------------------------------------------------------------------
@@ -119,7 +116,7 @@ def insert_conducteur(nom, prenom=None, date_naissance=None):
     try:
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO Conducteurs (nom, prenom, date_naissance) "
+            "INSERT INTO conducteurs (nom, prenom, date_naissance) "
             "VALUES (%s, %s, %s);",
             (nom, prenom, date_naissance),
         )
@@ -137,7 +134,7 @@ def insert_trajet(id_conducteur, debut_log, fin_log=None, commentaire=None):
     try:
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO Trajets (id_conducteur, debut_log, fin_log, commentaire) "
+            "INSERT INTO trajets (id_conducteur, debut_log, fin_log, commentaire) "
             "VALUES (%s, %s, %s, %s);",
             (id_conducteur, debut_log, fin_log, commentaire),
         )
@@ -156,13 +153,13 @@ def update_trajet_fin(id_trajet, fin_log, commentaire=None):
         cursor = connection.cursor()
         if commentaire is not None:
             cursor.execute(
-                "UPDATE Trajets SET fin_log = %s, commentaire = %s "
+                "UPDATE trajets SET fin_log = %s, commentaire = %s "
                 "WHERE id_trajet = %s;",
                 (fin_log, commentaire, id_trajet),
             )
         else:
             cursor.execute(
-                "UPDATE Trajets SET fin_log = %s WHERE id_trajet = %s;",
+                "UPDATE trajets SET fin_log = %s WHERE id_trajet = %s;",
                 (fin_log, id_trajet),
             )
         connection.commit()
@@ -184,7 +181,7 @@ def bulk_insert_mesures(rows):
     try:
         cursor = connection.cursor()
         cursor.executemany(
-            "INSERT INTO Mesures "
+            "INSERT INTO mesures "
             "(id_trajet, temps_ms, ouverture_oeil, rythme_cardiaque, "
             " alerte_visuelle, alerte_sonore) "
             "VALUES (%s, %s, %s, %s, %s, %s);",
@@ -272,11 +269,9 @@ def run_batch(duration_s=120):
     ensure_tables()
 
     # Conducteur
-    noms = ["Dupont", "Martin", "Bernard", "Durand", "Leroy"]
-    prenoms = ["Jean", "Marie", "Pierre", "Sophie", "Luc"]
-    nom = random.choice(noms)
-    prenom = random.choice(prenoms)
-    date_naiss = _random_birth_date()
+    nom = "Dupont"
+    prenom = "Marie"
+    date_naiss = date(1995, 3, 15)
     cid = insert_conducteur(nom, prenom, date_naiss)
     print(f"👤 Conducteur créé : {prenom} {nom} (id={cid})")
 
@@ -336,11 +331,9 @@ def run_live(duration_s=60):
     ensure_tables()
 
     # Conducteur
-    noms = ["Dupont", "Martin", "Bernard", "Durand", "Leroy"]
-    prenoms = ["Jean", "Marie", "Pierre", "Sophie", "Luc"]
-    nom = random.choice(noms)
-    prenom = random.choice(prenoms)
-    date_naiss = _random_birth_date()
+    nom = "Dupont"
+    prenom = "Marie"
+    date_naiss = date(1995, 3, 15)
     cid = insert_conducteur(nom, prenom, date_naiss)
     print(f"👤 Conducteur : {prenom} {nom} (id={cid})")
 
