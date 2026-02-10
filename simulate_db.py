@@ -269,9 +269,9 @@ def run_batch(duration_s=120):
     ensure_tables()
 
     # Conducteur
-    nom = "Dupont"
-    prenom = "Marie"
-    date_naiss = date(1995, 3, 15)
+    nom = "Martin"
+    prenom = "Sophie"
+    date_naiss = date(1987, 5, 27)
     cid = insert_conducteur(nom, prenom, date_naiss)
     print(f"👤 Conducteur créé : {prenom} {nom} (id={cid})")
 
@@ -331,9 +331,9 @@ def run_live(duration_s=60):
     ensure_tables()
 
     # Conducteur
-    nom = "Dupont"
-    prenom = "Marie"
-    date_naiss = date(1995, 3, 15)
+    nom = "Martin"
+    prenom = "Sophie"
+    date_naiss = _random_birth_date()
     cid = insert_conducteur(nom, prenom, date_naiss)
     print(f"👤 Conducteur : {prenom} {nom} (id={cid})")
 
