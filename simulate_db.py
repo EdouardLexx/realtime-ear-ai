@@ -333,7 +333,7 @@ def run_live(duration_s=60):
     # Conducteur
     nom = "Martin"
     prenom = "Sophie"
-    date_naiss = _random_birth_date()
+    date_naiss = date(1987, 5, 27)
     cid = insert_conducteur(nom, prenom, date_naiss)
     print(f"👤 Conducteur : {prenom} {nom} (id={cid})")
 
