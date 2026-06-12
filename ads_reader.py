@@ -166,7 +166,7 @@ class ADS1115Reader:
                 try:
                     with i2c_lock:
                         ads.gain = self._st_gain
-                        chan = AnalogIn(ads, getattr(ADS, f"P{self._st_channel}"))
+                        chan = AnalogIn(ads, self._st_channel)
                         voltage = chan.voltage
                     self.st_voltage = voltage
                     self.st_angle   = self._voltage_to_angle(voltage)
