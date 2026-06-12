@@ -79,6 +79,26 @@ def main():
     log.info("Wheatstone    : %s", _etat(cfg.ws_enabled and ads_reader is not None, ads_error))
     log.info("Angle volant  : %s", _etat(cfg.st_enabled and ads_reader is not None, ads_error))
 
+    # -- Snapshot de demarrage (auto-diagnostic) -----------------------------
+    # Laisse le temps aux threads capteurs de remplir une premiere mesure.
+    time.sleep(0.3)
+    if hr_monitor is not None:
+        log.info(
+            "Diagnostic HR : finger_present=%s | bpm=%.1f",
+            hr_monitor.finger_present,
+            hr_monitor.bpm,
+        )
+    if ads_reader is not None:
+        log.info(
+            "Diagnostic ADS: ws_ready=%s ws_diff=%.4fV ws_raw=%d | st_ready=%s st_voltage=%.3fV st_angle=%.1f",
+            ads_reader.ws_ready,
+            ads_reader.ws_voltage_diff,
+            ads_reader.ws_raw_diff,
+            ads_reader.st_ready,
+            ads_reader.st_voltage,
+            ads_reader.st_angle,
+        )
+
     # ── Trajet BDD ───────────────────────────────────────────────────────────
     trajet_id  = start_trajet(cfg)
     start_time = time.time()
@@ -122,6 +142,12 @@ def main():
 
     # -- Callback cam -> tout le reste ---------------------------------------
     last_send = [0.0]
+    health_state = {
+        "last_hr_warn": 0.0,
+        "last_ws_warn": 0.0,
+        "last_angle_warn": 0.0,
+        "last_health_debug": 0.0,
+    }
 
     def on_mesure(temps_ms: int, ouverture_oeil: float, alerte_visuelle: int):
         now = time.time()
@@ -167,6 +193,50 @@ def main():
             angle = ads_reader.st_angle
 
         db_queue.put((temps_ms, ouverture_oeil, alerte_visuelle, bpm, alerte_bpm, ws_volt, angle))
+
+        # -- Diagnostics runtime (throttles anti-spam) ------------------------
+        # 1) Cardiaque : doigt detecte mais BPM nul pendant longtemps.
+        if hr_monitor is not None and hr_monitor.finger_present and bpm == 0:
+            if now - health_state["last_hr_warn"] >= 10.0:
+                log.warning(
+                    "Diagnostic HR : doigt present mais BPM=0 depuis >=10s (verifier capteur MAX30102 / seuils)."
+                )
+                health_state["last_hr_warn"] = now
+
+        # 2) Wheatstone : tension hors plage attendue pour gain=4 (+/-1.024V).
+        if ads_reader is not None and ads_reader.ws_ready and abs(ws_volt) > 1.05:
+            if now - health_state["last_ws_warn"] >= 10.0:
+                log.warning(
+                    "Diagnostic WS : valeur atypique %.4fV (attendu proche de +/-1.024V max). Verifier pont/gain/cablage.",
+                    ws_volt,
+                )
+                health_state["last_ws_warn"] = now
+
+        # 3) Angle volant : proche butee de calibration en continu.
+        if ads_reader is not None and ads_reader.st_ready:
+            margin = 1.0
+            near_min = angle <= (cfg.st_angle_min + margin)
+            near_max = angle >= (cfg.st_angle_max - margin)
+            if near_min or near_max:
+                if now - health_state["last_angle_warn"] >= 10.0:
+                    log.warning(
+                        "Diagnostic angle : valeur proche butee (%.1f deg). Verifier calibration v_min/v_max et potentiometre.",
+                        angle,
+                    )
+                    health_state["last_angle_warn"] = now
+
+        # 4) Health line (DEBUG) toutes les 5s pour debug.log.
+        if now - health_state["last_health_debug"] >= 5.0:
+            log.debug(
+                "Health: queue=%d | hr_enabled=%s | ws_enabled=%s | st_enabled=%s | vib=%s | db_ok=%s",
+                db_queue.qsize(),
+                hr_monitor is not None,
+                (ads_reader is not None and ads_reader.ws_ready),
+                (ads_reader is not None and ads_reader.st_ready),
+                vibrator_running[0],
+                db_state["ok"],
+            )
+            health_state["last_health_debug"] = now
 
         # -- Ligne d'etat consolidee --------------------------------------------
         t_s       = temps_ms / 1000.0
