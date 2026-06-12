@@ -37,7 +37,7 @@
     <!-- ── Alerte sonore ── -->
     <sound>
         <enabled>true</enabled>
-        <file>/home/edouard/Documents/Eyes_recognition/Sounds/BMW Warning Chime.mp3</file>
+        <file>/home/remi/Documents/realtime-ear-ai-main-main/run_detection/Sounds/Fahh Sound Effect.mp3</file>
     </sound>
 
     <!-- ── Capteur cardiaque MAX30102 ── -->

@@ -19,7 +19,7 @@ scipy                    # heart_rate.py -> filtrage / detection de pics (degrad
 # Ces paquets ne s'installent pas sur un PC Windows : laisser
 # commente sur PC, decommenter sur le Raspberry Pi.
 # ─────────────────────────────────────────────────────────────
-# smbus2                          # heart_rate.py -> MAX30102 (I2C)
-# adafruit-blinka                 # board, busio
-# adafruit-circuitpython-ads1x15  # ads_reader.py -> ADS1115
-# lgpio                           # vibrator.py -> GPIO (PN2222A)
+smbus2                          # heart_rate.py -> MAX30102 (I2C)
+adafruit-blinka                 # board, busio
+adafruit-circuitpython-ads1x15  # ads_reader.py -> ADS1115
+lgpio                           # vibrator.py -> GPIO (PN2222A)
