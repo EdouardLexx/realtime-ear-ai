@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+    <!-- ── Conducteur ── -->
+    <conducteur>
+        <id>1</id>
+    </conducteur>
+
+    <!-- ── Base de données ── -->
+    <database>
+        <host>servrc.diskstation.me</host>
+        <port>3306</port>
+        <user>Marie</user>
+        <password>OCV5Ms!43T(9DJTF</password>
+        <name>Attention_conducteur</name>
+    </database>
+
+    <!-- ── Détection yeux ── -->
+    <detection>
+        <max_ear>0.35</max_ear>
+        <closed_threshold>0.15</closed_threshold>
+        <alert_duration>2.0</alert_duration>       <!-- secondes yeux fermés avant alerte -->
+        <print_interval>0.5</print_interval>
+    </detection>
+
+    <!-- ── Envoi base de données ── -->
+    <recording>
+        <send_interval>1.0</send_interval>
+    </recording>
+
+    <!-- ── Alerte sonore ── -->
+    <sound>
+        <enabled>true</enabled>
+        <file>/home/edouard/Documents/Eyes_recognition/Sounds/BMW Warning Chime.mp3</file>
+    </sound>
+
+    <!-- ── Capteur cardiaque MAX30102 ── -->
+    <heart_rate>
+        <enabled>true</enabled>
+        <i2c_bus>1</i2c_bus>
+        <int_pin>23</int_pin>
+        <alert_bpm_low>50</alert_bpm_low>
+        <alert_bpm_high>120</alert_bpm_high>
+    </heart_rate>
+
+    <!-- ── Vibreur ── -->
+    <vibrator>
+        <enabled>true</enabled>
+        <gpio_pin>12</gpio_pin>                <!-- GPIO12 = PWM0, "Commande moteur" -->
+        <pwm_frequency>100</pwm_frequency>     <!-- Hz -->
+        <duty_cycle>80</duty_cycle>            <!-- % intensité vibration (0-100) -->
+
+        <!-- Schéma de vibration quand yeux fermés -->
+        <pattern_on>0.3</pattern_on>           <!-- secondes ON par impulsion -->
+        <pattern_off>0.2</pattern_off>         <!-- secondes OFF entre impulsions -->
+        <pattern_reps>10</pattern_reps>        <!-- nombre d'impulsions par alerte -->
+
+        <!-- Seuil déclenchement : yeux fermés depuis X secondes -->
+        <!-- Doit être >= detection/alert_duration -->
+        <trigger_duration>2.0</trigger_duration>
+    </vibrator>
+
+    <!-- ── Pont de Wheatstone (ADS1115) ── -->
+    <wheatstone>
+        <enabled>true</enabled>
+        <i2c_address>0x48</i2c_address>        <!-- ADDR→GND = 0x48 -->
+        <gain>4</gain>                         <!-- 4 = ±1.024V, adapté à alim 3.3V -->
+        <sample_rate>0.1</sample_rate>         <!-- secondes entre lectures -->
+    </wheatstone>
+
+    <!-- ── Angle volant (potentiomètre 10K sur ADS1115) ── -->
+    <steering>
+        <enabled>true</enabled>
+        <i2c_address>0x48</i2c_address>        <!-- même ADS1115 que le Wheatstone -->
+        <gain>1</gain>                         <!-- 1 = ±4.096V -->
+        <channel>3</channel>                   <!-- A3 -->
+        <sample_rate>0.1</sample_rate>         <!-- secondes entre lectures -->
+
+        <!-- Calibration (à ajuster après calibration réelle) -->
+        <v_min>0.0</v_min>
+        <v_max>3.3</v_max>
+        <angle_min>-450.0</angle_min>
+        <angle_max>450.0</angle_max>
+    </steering>
+
+</config>

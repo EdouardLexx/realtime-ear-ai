@@ -3,158 +3,220 @@ import numpy as np
 import mediapipe as mp
 import time
 import sys
-import pygame  # pour le son
+from typing import Callable, Optional
+from config_loader import Config
 
-# ---------- Configuration ----------
-left_eye_landmarks  = [362, 385, 387, 263, 373, 380]
-right_eye_landmarks = [33, 160, 158, 133, 153, 144]
+# Son via pygame (optionnel)
+try:
+    import pygame
+    PYGAME_AVAILABLE = True
+except ImportError:
+    PYGAME_AVAILABLE = False
 
-MAX_EAR = 0.35
-CLOSED_EYE_THRESHOLD = 0.15
-PRINT_INTERVAL = 0.5   # secondes entre impressions terminal
-ALERT_DURATION = 2.0   # secondes avant alerte
 
-ALERT_SOUND_PATH = "/home/edouard/Documents/Eyes_recognition/Sounds/BMW Warning Chime.mp3"
+# ─────────────────────────────────────────────
+# Gestion du son
+# ─────────────────────────────────────────────
 
-# ---------- Initialiser pygame pour le son ----------
-pygame.mixer.init()
-
-def start_alert_sound():
-    """Joue le son en boucle"""
+def _init_sound(cfg: Config) -> bool:
+    """Initialise pygame mixer. Retourne True si prêt."""
+    if not cfg.sound_enabled:
+        return False
+    if not PYGAME_AVAILABLE:
+        print(" pygame non installé — son désactivé. (pip install pygame)")
+        return False
     try:
-        if not pygame.mixer.music.get_busy():  # éviter de relancer si déjà en cours
-            pygame.mixer.music.load(ALERT_SOUND_PATH)
+        pygame.mixer.init()
+        return True
+    except Exception as e:
+        print(f" Impossible d'initialiser le son : {e}")
+        return False
+
+
+def _start_sound(cfg: Config, sound_ready: bool) -> None:
+    if not sound_ready:
+        return
+    try:
+        if not pygame.mixer.music.get_busy():
+            pygame.mixer.music.load(cfg.sound_file)
             pygame.mixer.music.play(-1)  # boucle infinie
     except Exception as e:
-        print(f"Erreur lecture son: {e}")
+        print(f" Erreur lecture son : {e}")
 
-def stop_alert_sound():
-    """Arrête le son"""
-    pygame.mixer.music.stop()
 
-# ---------- Fonctions utilitaires ----------
-def denormalize_landmark(landmark, w, h):
-    x = int(landmark.x * w)
-    y = int(landmark.y * h)
-    x = max(0, min(w - 1, x))
-    y = max(0, min(h - 1, y))
+def _stop_sound(sound_ready: bool) -> None:
+    if not sound_ready:
+        return
+    try:
+        pygame.mixer.music.stop()
+    except Exception:
+        pass
+
+
+# ─────────────────────────────────────────────
+# Fonctions utilitaires
+# ─────────────────────────────────────────────
+
+def _denormalize(landmark, w: int, h: int):
+    x = max(0, min(w - 1, int(landmark.x * w)))
+    y = max(0, min(h - 1, int(landmark.y * h)))
     return (x, y)
 
-def eye_aspect_ratio(eye_pts):
+
+def _eye_aspect_ratio(eye_pts) -> float:
     A = np.linalg.norm(np.array(eye_pts[1]) - np.array(eye_pts[5]))
     B = np.linalg.norm(np.array(eye_pts[2]) - np.array(eye_pts[4]))
     C = np.linalg.norm(np.array(eye_pts[0]) - np.array(eye_pts[3]))
-    ear = (A + B) / (2.0 * C) if C != 0 else 0.0
-    return ear, A, B, C
+    return (A + B) / (2.0 * C) if C != 0 else 0.0
 
-# ---------- Ouvrir la webcam ----------
-cap = cv2.VideoCapture(0)
-if not cap.isOpened():
-    print("❌ Erreur : webcam inaccessible")
-    sys.exit(1)
-else:
+
+def _ear_to_percent(ear: float, cfg: Config) -> float:
+    if ear < cfg.closed_threshold:
+        return 0.0
+    return min(ear / cfg.max_ear * 100, 100.0)
+
+
+# ─────────────────────────────────────────────
+# Landmarks
+# ─────────────────────────────────────────────
+
+LEFT_EYE_LANDMARKS  = [362, 385, 387, 263, 373, 380]
+RIGHT_EYE_LANDMARKS = [33,  160, 158, 133, 153, 144]
+
+
+# ─────────────────────────────────────────────
+# Boucle principale
+# ─────────────────────────────────────────────
+
+def run_detection(
+    cfg:             Config,
+    on_mesure:       Optional[Callable[[int, float, int], None]] = None,
+    start_time_ref:  Optional[float] = None,
+) -> None:
+    """Lance la détection en temps réel.
+
+    Callback on_mesure(temps_ms, ouverture_oeil_pct, alerte_visuelle)
+    """
+    t0          = start_time_ref if start_time_ref is not None else time.time()
+    sound_ready = _init_sound(cfg)
+
+    # ── Webcam ──
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("❌ Erreur : webcam inaccessible", file=sys.stderr)
+        sys.exit(1)
     print("✅ Webcam détectée")
 
-cv2.namedWindow("Détection ouverture yeux (Live) - q pour quitter", cv2.WINDOW_NORMAL)
-cv2.resizeWindow("Détection ouverture yeux (Live) - q pour quitter", 1000, 700)
+    win_title = "Détection ouverture yeux (Live) — q pour quitter"
+    cv2.namedWindow(win_title, cv2.WINDOW_NORMAL)
+    cv2.resizeWindow(win_title, 1000, 700)
 
-mp_facemesh = mp.solutions.face_mesh
-last_print = 0.0
-closed_start_time = None
+    mp_facemesh   = mp.solutions.face_mesh
+    last_print    = 0.0
+    closed_start  = None
+    alerte_active = False
 
-with mp_facemesh.FaceMesh(
-    static_image_mode=False,
-    max_num_faces=1,
-    refine_landmarks=True,
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5
-) as face_mesh:
-    try:
-        while True:
-            ret, frame = cap.read()
-            if not ret or frame is None:
-                print("Aucun frame reçu — arrêt.", file=sys.stderr)
-                break
+    with mp_facemesh.FaceMesh(
+        static_image_mode=False,
+        max_num_faces=1,
+        refine_landmarks=True,
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5,
+    ) as face_mesh:
+        try:
+            while True:
+                ret, frame = cap.read()
+                if not ret or frame is None:
+                    print("Aucun frame reçu — arrêt.", file=sys.stderr)
+                    break
 
+                frame = cv2.flip(frame, 1)
+                h, w, _ = frame.shape
+                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                rgb.flags.writeable = False
+                results = face_mesh.process(rgb)
+                rgb.flags.writeable = True
 
-            frame = cv2.flip(frame, 1)
-            h, w, _ = frame.shape
-            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            rgb.flags.writeable = False
-            results = face_mesh.process(rgb)
-            rgb.flags.writeable = True
+                left_pct = right_pct = None
+                alerte_visuelle = 0
 
-            left_percent = right_percent = None
+                if results.multi_face_landmarks:
+                    lm = results.multi_face_landmarks[0]
 
-            if results.multi_face_landmarks:
-                face_landmarks = results.multi_face_landmarks[0]
+                    left_pts  = [_denormalize(lm.landmark[i], w, h) for i in LEFT_EYE_LANDMARKS]
+                    right_pts = [_denormalize(lm.landmark[i], w, h) for i in RIGHT_EYE_LANDMARKS]
 
-                # récupérer points en pixels
-                left_pts  = [denormalize_landmark(face_landmarks.landmark[i], w, h) for i in left_eye_landmarks]
-                right_pts = [denormalize_landmark(face_landmarks.landmark[i], w, h) for i in right_eye_landmarks]
+                    # ── Dessin des points ──
+                    for pts in (left_pts, right_pts):
+                        for idx, p in enumerate(pts, start=1):
+                            cv2.circle(frame, p, 2, (0, 255, 0), -1)
+                            cv2.putText(frame, str(idx), (p[0]+3, p[1]-3),
+                                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 1)
 
-                # dessiner et numéroter
-                for i, p in enumerate(left_pts, start=1):
-                    cv2.circle(frame, p, 2, (0, 255, 0), -1)
-                    cv2.putText(frame, str(i), (p[0]+3, p[1]-3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0,0,255), 1)
-                for i, p in enumerate(right_pts, start=1):
-                    cv2.circle(frame, p, 2, (0, 255, 0), -1)
-                    cv2.putText(frame, str(i), (p[0]+3, p[1]-3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0,0,255), 1)
+                    # ── EAR → % ──
+                    left_ear  = _eye_aspect_ratio(left_pts)
+                    right_ear = _eye_aspect_ratio(right_pts)
+                    left_pct  = _ear_to_percent(left_ear,  cfg)
+                    right_pct = _ear_to_percent(right_ear, cfg)
+                    avg_pct   = (left_pct + right_pct) / 2.0
 
-                # calcul EAR et pourcentages
-                left_ear, _, _, _ = eye_aspect_ratio(left_pts)
-                right_ear, _, _, _ = eye_aspect_ratio(right_pts)
-                left_percent  = 0.0 if left_ear < CLOSED_EYE_THRESHOLD else min(left_ear / MAX_EAR * 100, 100)
-                right_percent = 0.0 if right_ear < CLOSED_EYE_THRESHOLD else min(right_ear / MAX_EAR * 100, 100)
+                    # ── Gestion alerte ──
+                    yeux_fermes = (left_pct == 0.0 and right_pct == 0.0)
 
-                # Gestion alerte yeux fermés > 2 secondes
-                if left_percent == 0.0 and right_percent == 0.0:
-                    if closed_start_time is None:
-                        closed_start_time = time.time()
-                    elif time.time() - closed_start_time >= ALERT_DURATION:
-                        print("Alerte : yeux fermés depuis plus de 2 secondes !")
-                        start_alert_sound()  # joue en boucle
+                    if yeux_fermes:
+                        if closed_start is None:
+                            closed_start = time.time()
+                        if time.time() - closed_start >= cfg.alert_duration:
+                            alerte_visuelle = 1
+                            alerte_active   = True
+                            _start_sound(cfg, sound_ready)
+                            cv2.putText(
+                                frame, "YEUX FERMES !",
+                                (int(w / 6), int(h / 2)),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3,
+                            )
+                    else:
+                        if alerte_active:
+                            print("Yeux rouverts — alerte levée.")
+                            alerte_active = False
+                            _stop_sound(sound_ready)
+                        closed_start = None
 
-                        # 🔴 Ajout affichage texte rouge sur l’écran
-                        cv2.putText(
-                            frame,
-                            "YEUX FERMES !",
-                            (int(w/6), int(h/2)),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            1.5,
-                            (0, 0, 255),
-                            3
+                    # ── Texte overlay ──
+                    c_left  = (0, 0, 255) if left_pct  == 0.0 else (0, 255, 0)
+                    c_right = (0, 0, 255) if right_pct == 0.0 else (0, 255, 0)
+                    cv2.putText(frame, f"D: {left_pct:.1f}%",  (10, 30),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, c_left,  2)
+                    cv2.putText(frame, f"G: {right_pct:.1f}%", (10, 70),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, c_right, 2)
+
+                    # ── Callback BDD ──
+                    if on_mesure is not None:
+                        temps_ms = int((time.time() - t0) * 1000)
+                        on_mesure(temps_ms, avg_pct, alerte_visuelle)
+
+                # ── Affichage ──
+                cv2.imshow(win_title, frame)
+
+                # ── Log terminal ──
+                now = time.time()
+                if now - last_print >= cfg.print_interval:
+                    if left_pct is not None:
+                        print(
+                            f"Oeil droit: EAR={left_ear:.3f} %={left_pct:.1f} | "
+                            f"Oeil gauche: EAR={right_ear:.3f} %={right_pct:.1f} | "
+                            f"Alerte={alerte_visuelle}"
                         )
-                else:
-                    closed_start_time = None
-                    stop_alert_sound()  # coupe le son dès que les yeux s’ouvrent
+                    else:
+                        print("Aucun visage détecté")
+                    last_print = now
 
-                # couleur texte
-                color_left  = (0,0,255) if left_percent == 0.0 else (0,255,0)
-                color_right = (0,0,255) if right_percent == 0.0 else (0,255,0)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
 
-                cv2.putText(frame, f"D: {left_percent:.1f}%", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color_left, 2)
-                cv2.putText(frame, f"G: {right_percent:.1f}%", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, color_right, 2)
-
-            # affichage
-            cv2.imshow("Détection ouverture yeux (Live) - q pour quitter", frame)
-
-            # impressions terminal
-            now = time.time()
-            if now - last_print >= PRINT_INTERVAL:
-                if left_percent is not None and right_percent is not None:
-                    print(f"Oeil droit: EAR={left_ear:.3f}  %={left_percent:.1f} | Oeil gauche: EAR={right_ear:.3f}  %={right_percent:.1f}")
-                else:
-                    print("Aucun visage détecté")
-                last_print = now
-
-            # quitter
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-    except KeyboardInterrupt:
-        print("Interrompu par l'utilisateur.")
-    finally:
-        cap.release()
-        cv2.destroyAllWindows()
-        stop_alert_sound()
+        except KeyboardInterrupt:
+            print("Interrompu par l'utilisateur.")
+        finally:
+            _stop_sound(sound_ready)
+            cap.release()
+            cv2.destroyAllWindows()
