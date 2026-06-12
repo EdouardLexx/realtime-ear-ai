@@ -1,0 +1,228 @@
+17:01:04 INFO    [main] ============================================================
+17:01:04 INFO    [main] DEMARRAGE - Detection attention conducteur
+17:01:04 INFO    [main] ============================================================
+17:01:04 INFO    [main] Config        : conducteur=1 | niveau log=INFO
+17:01:04 INFO    [heart_rate] HeartRateMonitor demarre (I2C bus=1, INT pin=23)
+17:01:04 INFO    [main] Cardiaque     : OK
+17:01:04 INFO    [vibrator] Vibreur initialise sur GPIO12
+17:01:04 INFO    [main] Vibreur       : OK (GPIO12)
+17:01:04 INFO    [ads_reader] ADS1115Reader demarre (addr=0x48, wheatstone=ON gain=4, volant=ON gain=1 canal A3)
+17:01:04 INFO    [main] Wheatstone    : OK
+17:01:04 INFO    [main] Angle volant  : OK
+17:01:04 INFO    [ads_reader] ADS1115 detecte (addr=0x48)
+17:01:04 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:04 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:04 INFO    [main] Diagnostic HR : finger_present=False | bpm=0.0
+17:01:04 INFO    [main] Diagnostic ADS: ws_ready=True ws_diff=0.2744V ws_raw=8081 | st_ready=True st_voltage=0.000V st_angle=0.0
+17:01:04 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:04 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:04 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:05 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:05 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:05 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:05 INFO    [db] Trajet demarre (id_trajet=50)
+17:01:05 INFO    [main] ============================================================
+17:01:05 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:05 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:05 INFO    [CamLive] Webcam detectee (index=0)
+17:01:05 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:05 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:06 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:06 INFO    [heart_rate] MAX30102 initialise
+17:01:06 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:06 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:06 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:06 DEBUG   [main] Health: queue=1 | hr_enabled=True | ws_enabled=True | st_enabled=True | vib=False | db_ok=True
+17:01:06 INFO    [main] [t=   1.2s] yeux= 63.5% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:06 DEBUG   [CamLive] Oeil droit: EAR=0.208 %=59.3 | Oeil gauche: EAR=0.237 %=67.7 | Alerte=0
+17:01:06 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:06 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:06 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:06 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:07 DEBUG   [CamLive] Oeil droit: EAR=0.245 %=69.9 | Oeil gauche: EAR=0.263 %=75.1 | Alerte=0
+17:01:07 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:07 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:07 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:07 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:07 INFO    [main] [t=   2.2s] yeux= 78.7% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:07 DEBUG   [CamLive] Oeil droit: EAR=0.201 %=57.3 | Oeil gauche: EAR=0.405 %=100.0 | Alerte=0
+17:01:07 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:07 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:07 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:08 DEBUG   [CamLive] Oeil droit: EAR=0.328 %=93.6 | Oeil gauche: EAR=0.447 %=100.0 | Alerte=0
+17:01:08 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:08 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:08 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:08 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:08 INFO    [main] [t=   3.2s] yeux= 82.9% | BPM=  0 | angle=   +0.0 | WS=  0.2746V | vibreur=OFF | alerte=-        | DB=OK
+17:01:08 DEBUG   [CamLive] Oeil droit: EAR=0.230 %=65.8 | Oeil gauche: EAR=0.405 %=100.0 | Alerte=0
+17:01:08 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:08 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:08 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:09 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:09 DEBUG   [CamLive] Oeil droit: EAR=0.139 %=0.0 | Oeil gauche: EAR=0.312 %=89.2 | Alerte=0
+17:01:09 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:09 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:09 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:09 INFO    [main] [t=   4.2s] yeux= 93.9% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:09 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:09 DEBUG   [CamLive] Oeil droit: EAR=0.272 %=77.7 | Oeil gauche: EAR=0.382 %=100.0 | Alerte=0
+17:01:09 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:09 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:09 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:10 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:10 DEBUG   [CamLive] Oeil droit: EAR=0.187 %=53.5 | Oeil gauche: EAR=0.382 %=100.0 | Alerte=0
+17:01:10 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:10 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:10 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:10 INFO    [main] [t=   5.2s] yeux= 77.0% | BPM=  0 | angle=   +0.0 | WS=  0.2745V | vibreur=OFF | alerte=-        | DB=OK
+17:01:10 DEBUG   [CamLive] Oeil droit: EAR=0.212 %=60.6 | Oeil gauche: EAR=0.469 %=100.0 | Alerte=0
+17:01:10 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:10 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:10 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:11 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:11 DEBUG   [CamLive] Oeil droit: EAR=0.201 %=57.4 | Oeil gauche: EAR=0.312 %=89.2 | Alerte=0
+17:01:11 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:11 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:11 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:11 DEBUG   [main] Health: queue=1 | hr_enabled=True | ws_enabled=True | st_enabled=True | vib=False | db_ok=True
+17:01:11 INFO    [main] [t=   6.2s] yeux= 66.6% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:11 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:11 DEBUG   [CamLive] Oeil droit: EAR=0.132 %=0.0 | Oeil gauche: EAR=0.277 %=79.2 | Alerte=0
+17:01:11 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:11 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:12 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:12 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:12 DEBUG   [CamLive] Oeil droit: EAR=0.187 %=53.5 | Oeil gauche: EAR=0.471 %=100.0 | Alerte=0
+17:01:12 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:12 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:12 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:12 INFO    [main] [t=   7.2s] yeux= 68.3% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:12 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:12 DEBUG   [CamLive] Oeil droit: EAR=0.189 %=54.0 | Oeil gauche: EAR=0.225 %=64.4 | Alerte=0
+17:01:12 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:12 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:13 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:13 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:13 DEBUG   [CamLive] Oeil droit: EAR=0.230 %=65.8 | Oeil gauche: EAR=0.145 %=0.0 | Alerte=0
+17:01:13 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:13 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:13 INFO    [main] [t=   8.2s] yeux= 53.6% | BPM=  0 | angle=   +0.0 | WS=  0.2745V | vibreur=OFF | alerte=-        | DB=OK
+17:01:13 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:13 DEBUG   [CamLive] Oeil droit: EAR=0.148 %=0.0 | Oeil gauche: EAR=0.186 %=53.2 | Alerte=0
+17:01:13 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:13 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:14 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:14 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:14 DEBUG   [CamLive] Oeil droit: EAR=0.166 %=47.5 | Oeil gauche: EAR=0.168 %=48.0 | Alerte=0
+17:01:14 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:14 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:14 INFO    [main] [t=   9.2s] yeux= 25.3% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:14 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:14 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:14 DEBUG   [CamLive] Oeil droit: EAR=0.140 %=0.0 | Oeil gauche: EAR=0.108 %=0.0 | Alerte=0
+17:01:14 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:15 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:15 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:15 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:15 DEBUG   [CamLive] Oeil droit: EAR=0.212 %=60.5 | Oeil gauche: EAR=0.171 %=48.8 | Alerte=0
+17:01:15 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:15 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:15 INFO    [main] [t=  10.2s] yeux= 54.4% | BPM=  0 | angle=   +0.0 | WS=  0.2743V | vibreur=OFF | alerte=-        | DB=OK
+17:01:15 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:15 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:15 DEBUG   [CamLive] Oeil droit: EAR=0.166 %=47.5 | Oeil gauche: EAR=0.283 %=80.9 | Alerte=0
+17:01:15 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:16 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:16 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:16 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:16 DEBUG   [CamLive] Oeil droit: EAR=0.149 %=0.0 | Oeil gauche: EAR=0.181 %=51.7 | Alerte=0
+17:01:16 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:16 DEBUG   [main] Health: queue=1 | hr_enabled=True | ws_enabled=True | st_enabled=True | vib=False | db_ok=True
+17:01:16 INFO    [main] [t=  11.2s] yeux= 61.3% | BPM=  0 | angle=   +0.0 | WS=  0.2745V | vibreur=OFF | alerte=-        | DB=OK
+17:01:16 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:16 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:16 DEBUG   [CamLive] Oeil droit: EAR=0.168 %=48.1 | Oeil gauche: EAR=0.382 %=100.0 | Alerte=0
+17:01:16 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:17 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:17 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:17 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:17 DEBUG   [CamLive] Oeil droit: EAR=0.166 %=47.5 | Oeil gauche: EAR=0.263 %=75.2 | Alerte=0
+17:01:17 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:17 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:17 INFO    [main] [t=  12.2s] yeux= 62.8% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:17 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:17 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:17 DEBUG   [CamLive] Oeil droit: EAR=0.140 %=0.0 | Oeil gauche: EAR=0.171 %=48.8 | Alerte=0
+17:01:18 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:18 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:18 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:18 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:18 DEBUG   [CamLive] Oeil droit: EAR=0.225 %=64.4 | Oeil gauche: EAR=0.213 %=60.8 | Alerte=0
+17:01:18 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:18 INFO    [main] [t=  13.2s] yeux= 58.9% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:18 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:18 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:18 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:18 DEBUG   [CamLive] Oeil droit: EAR=0.189 %=54.0 | Oeil gauche: EAR=0.142 %=0.0 | Alerte=0
+17:01:19 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:19 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:19 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:19 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:19 DEBUG   [CamLive] Oeil droit: EAR=0.150 %=0.0 | Oeil gauche: EAR=0.207 %=59.2 | Alerte=0
+17:01:19 INFO    [main] [t=  14.2s] yeux= 29.6% | BPM=  0 | angle=   +0.0 | WS=  0.2746V | vibreur=OFF | alerte=-        | DB=OK
+17:01:19 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:19 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:19 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:20 DEBUG   [CamLive] Oeil droit: EAR=0.159 %=45.3 | Oeil gauche: EAR=0.174 %=49.7 | Alerte=0
+17:01:20 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:20 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:20 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:20 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:20 DEBUG   [CamLive] Oeil droit: EAR=0.176 %=50.3 | Oeil gauche: EAR=0.189 %=53.9 | Alerte=0
+17:01:20 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:20 INFO    [main] [t=  15.3s] yeux= 59.8% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:20 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:20 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:21 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:21 DEBUG   [CamLive] Oeil droit: EAR=0.231 %=66.0 | Oeil gauche: EAR=0.142 %=0.0 | Alerte=0
+17:01:21 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:21 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:21 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:21 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:21 DEBUG   [main] Health: queue=1 | hr_enabled=True | ws_enabled=True | st_enabled=True | vib=False | db_ok=True
+17:01:21 INFO    [main] [t=  16.3s] yeux= 58.2% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:21 DEBUG   [CamLive] Oeil droit: EAR=0.177 %=50.5 | Oeil gauche: EAR=0.230 %=65.8 | Alerte=0
+17:01:21 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:21 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:21 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:22 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:22 DEBUG   [CamLive] Oeil droit: EAR=0.212 %=60.6 | Oeil gauche: EAR=0.200 %=57.1 | Alerte=0
+17:01:22 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:22 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:22 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:22 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:22 INFO    [main] [t=  17.3s] yeux= 46.8% | BPM=  0 | angle=   +0.0 | WS=  0.2745V | vibreur=OFF | alerte=-        | DB=OK
+17:01:22 DEBUG   [CamLive] Oeil droit: EAR=0.166 %=47.5 | Oeil gauche: EAR=0.161 %=46.0 | Alerte=0
+17:01:22 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:22 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:23 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:23 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:23 DEBUG   [CamLive] Oeil droit: EAR=0.201 %=57.4 | Oeil gauche: EAR=0.204 %=58.2 | Alerte=0
+17:01:23 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:23 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:23 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:23 INFO    [main] [t=  18.3s] yeux= 23.3% | BPM=  0 | angle=   +0.0 | WS=  0.2744V | vibreur=OFF | alerte=-        | DB=OK
+17:01:23 DEBUG   [CamLive] Oeil droit: EAR=0.131 %=0.0 | Oeil gauche: EAR=0.186 %=53.2 | Alerte=0
+17:01:23 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:23 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:24 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:24 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:24 DEBUG   [CamLive] Oeil droit: EAR=0.117 %=0.0 | Oeil gauche: EAR=0.152 %=43.4 | Alerte=0
+17:01:24 INFO    [CamLive] Interrompu par l'utilisateur.
+17:01:24 INFO    [main] Arret en cours...
+17:01:24 ERROR   [ads_reader] Angle volant — erreur lecture : module 'adafruit_ads1x15.ads1115' has no attribute 'P3'
+17:01:24 INFO    [heart_rate] HeartRateMonitor arrete.
+17:01:24 INFO    [ads_reader] ADS1115Reader arrete.
+17:01:25 INFO    [db] Trajet 50 termine.
+17:01:25 INFO    [main] Arret propre.
