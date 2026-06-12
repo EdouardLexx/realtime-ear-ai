@@ -5,6 +5,9 @@ from dataclasses import dataclass
 
 @dataclass
 class Config:
+    # Journalisation
+    log_level:         str
+
     # Conducteur
     id_conducteur:     int
 
@@ -16,6 +19,7 @@ class Config:
     db_name:           str
 
     # Détection yeux
+    camera_index:      int
     max_ear:           float
     closed_threshold:  float
     alert_duration:    float
@@ -79,7 +83,16 @@ def load_config(path: str = "config.xml") -> Config:
     def getbool(tag: str) -> bool:
         return get(tag).lower() == "true"
 
+    def get_default(tag: str, default: str) -> str:
+        node = root.find(tag)
+        if node is None or node.text is None:
+            return default
+        return node.text.strip()
+
     return Config(
+        # Journalisation
+        log_level        = get_default("logging/level", "INFO"),
+
         # Conducteur
         id_conducteur    = int(get("conducteur/id")),
 
@@ -91,6 +104,7 @@ def load_config(path: str = "config.xml") -> Config:
         db_name          = get("database/name"),
 
         # Détection yeux
+        camera_index     = int(get_default("detection/camera_index", "0")),
         max_ear          = float(get("detection/max_ear")),
         closed_threshold = float(get("detection/closed_threshold")),
         alert_duration   = float(get("detection/alert_duration")),

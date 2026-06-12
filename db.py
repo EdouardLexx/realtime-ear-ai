@@ -1,6 +1,9 @@
 import mysql.connector
 from mysql.connector import Error, errorcode
+from app_logger import get_logger
 from config_loader import Config
+
+log = get_logger(__name__)
 
 
 # ─────────────────────────────────────────────
@@ -43,7 +46,7 @@ def start_trajet(cfg: Config) -> int:
     finally:
         cursor.close()
         conn.close()
-    print(f"🚗 Trajet démarré (id_trajet = {trajet_id})")
+    log.info("Trajet demarre (id_trajet=%d)", trajet_id)
     return trajet_id
 
 
@@ -59,7 +62,7 @@ def end_trajet(cfg: Config, id_trajet: int) -> None:
     finally:
         cursor.close()
         conn.close()
-    print(f"🏁 Trajet {id_trajet} terminé !")
+    log.info("Trajet %d termine.", id_trajet)
 
 
 # ─────────────────────────────────────────────

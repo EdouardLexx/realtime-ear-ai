@@ -2,9 +2,11 @@ import cv2
 import numpy as np
 import mediapipe as mp
 import time
-import sys
 from typing import Callable, Optional
+from app_logger import get_logger
 from config_loader import Config
+
+log = get_logger(__name__)
 
 # Son via pygame (optionnel)
 try:
@@ -23,13 +25,13 @@ def _init_sound(cfg: Config) -> bool:
     if not cfg.sound_enabled:
         return False
     if not PYGAME_AVAILABLE:
-        print(" pygame non installé — son désactivé. (pip install pygame)")
+        log.warning("pygame non installe — son desactive. (pip install pygame)")
         return False
     try:
         pygame.mixer.init()
         return True
     except Exception as e:
-        print(f" Impossible d'initialiser le son : {e}")
+        log.warning("Impossible d'initialiser le son : %s", e)
         return False
 
 
@@ -41,7 +43,7 @@ def _start_sound(cfg: Config, sound_ready: bool) -> None:
             pygame.mixer.music.load(cfg.sound_file)
             pygame.mixer.music.play(-1)  # boucle infinie
     except Exception as e:
-        print(f" Erreur lecture son : {e}")
+        log.warning("Erreur lecture son : %s", e)
 
 
 def _stop_sound(sound_ready: bool) -> None:
@@ -101,11 +103,11 @@ def run_detection(
     sound_ready = _init_sound(cfg)
 
     # ── Webcam ──
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(cfg.camera_index)
     if not cap.isOpened():
-        print("❌ Erreur : webcam inaccessible", file=sys.stderr)
-        sys.exit(1)
-    print("✅ Webcam détectée")
+        log.error("Webcam inaccessible (index=%d)", cfg.camera_index)
+        raise SystemExit(1)
+    log.info("Webcam detectee (index=%d)", cfg.camera_index)
 
     win_title = "Détection ouverture yeux (Live) — q pour quitter"
     cv2.namedWindow(win_title, cv2.WINDOW_NORMAL)
@@ -127,7 +129,7 @@ def run_detection(
             while True:
                 ret, frame = cap.read()
                 if not ret or frame is None:
-                    print("Aucun frame reçu — arrêt.", file=sys.stderr)
+                    log.warning("Aucun frame recu — arret.")
                     break
 
                 frame = cv2.flip(frame, 1)
@@ -177,7 +179,7 @@ def run_detection(
                             )
                     else:
                         if alerte_active:
-                            print("Yeux rouverts — alerte levée.")
+                            log.info("Yeux rouverts — alerte levee.")
                             alerte_active = False
                             _stop_sound(sound_ready)
                         closed_start = None
@@ -202,20 +204,19 @@ def run_detection(
                 now = time.time()
                 if now - last_print >= cfg.print_interval:
                     if left_pct is not None:
-                        print(
-                            f"Oeil droit: EAR={left_ear:.3f} %={left_pct:.1f} | "
-                            f"Oeil gauche: EAR={right_ear:.3f} %={right_pct:.1f} | "
-                            f"Alerte={alerte_visuelle}"
+                        log.debug(
+                            "Oeil droit: EAR=%.3f %%=%.1f | Oeil gauche: EAR=%.3f %%=%.1f | Alerte=%d",
+                            left_ear, left_pct, right_ear, right_pct, alerte_visuelle
                         )
                     else:
-                        print("Aucun visage détecté")
+                        log.debug("Aucun visage detecte")
                     last_print = now
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
 
         except KeyboardInterrupt:
-            print("Interrompu par l'utilisateur.")
+            log.info("Interrompu par l'utilisateur.")
         finally:
             _stop_sound(sound_ready)
             cap.release()

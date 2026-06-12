@@ -1,12 +1,18 @@
 """
 vibrator.py
 -----------
-Commande du vibreur via transistor PN2222A sur GPIO Raspberry Pi.
-Utilise lgpio (compatible Raspberry Pi 5).
+Commande du vibreur via transistor PN2222A sur GPIO du Raspberry Pi.
+Utilise lgpio.
+
+Le pilotage est en TOUT-OU-RIEN (ON/OFF) : le vibreur est soit alimente,
+soit eteint. Il n'y a pas de reglage d'intensite (pas de PWM).
 """
 
 import threading
-import time
+
+from app_logger import get_logger
+
+log = get_logger(__name__)
 
 try:
     import lgpio
@@ -17,44 +23,42 @@ except ImportError:
 
 class Vibrator:
     """
-    Contrôle le vibreur en ON/OFF simulé PWM (compatible Pi 5).
+    Controle le vibreur en TOUT-OU-RIEN (ON/OFF).
 
     Modes disponibles :
-      - pulse(duration, duty)  : vibration unique pendant `duration` secondes
-      - pattern(on, off, reps) : schéma on/off répété `reps` fois
-      - stop()                 : arrêt immédiat
+      - pulse(duration)        : vibration unique pendant `duration` secondes
+      - pattern(on, off, reps) : schema on/off repete `reps` fois
+      - stop()                 : arret immediat
     """
 
-    def __init__(self, gpio_pin: int = 12, frequency: int = 100):
-        self._pin        = gpio_pin
-        self._freq       = frequency
-        self._handle     = None
-        self._lock       = threading.Lock()
+    def __init__(self, gpio_pin: int = 12):
+        self._pin           = gpio_pin
+        self._handle        = None
         self._active_thread = None
-        self._stop_event = threading.Event()
+        self._stop_event    = threading.Event()
 
         if not LGPIO_AVAILABLE:
-            print("⚠️  lgpio non disponible — vibreur simulé (logs uniquement)")
+            log.warning("lgpio non disponible — vibreur simule (logs uniquement)")
             return
 
         try:
             self._handle = lgpio.gpiochip_open(0)
             lgpio.gpio_claim_output(self._handle, self._pin)
             lgpio.gpio_write(self._handle, self._pin, 0)
-            print(f"🔧 Vibreur initialisé sur GPIO{self._pin} (lgpio)")
+            log.info("Vibreur initialise sur GPIO%d", self._pin)
         except Exception as e:
-            print(f"⚠️  Vibreur non initialisé : {e}")
+            log.warning("Vibreur non initialise : %s", e)
             self._handle = None
 
     # ── API publique ─────────────────────────────────────────────────────────
 
-    def pulse(self, duration: float = 1.0, duty: int = 80):
+    def pulse(self, duration: float = 1.0):
         """Vibre pendant `duration` secondes."""
-        self._launch(self._do_pulse, duration, duty)
+        self._launch(self._do_pulse, duration)
 
-    def pattern(self, on: float = 0.3, off: float = 0.2, reps: int = 5, duty: int = 80):
-        """Schéma répété : vibre `on`s, pause `off`s, × `reps`."""
-        self._launch(self._do_pattern, on, off, reps, duty)
+    def pattern(self, on: float = 0.3, off: float = 0.2, reps: int = 5):
+        """Schema repete : vibre `on`s, pause `off`s, x `reps`."""
+        self._launch(self._do_pattern, on, off, reps)
 
     def stop(self):
         """Arrête immédiatement toute vibration."""
@@ -86,14 +90,14 @@ class Vibrator:
             except Exception:
                 pass
         else:
-            print(f"[VIBREUR SIM] {'ON' if on else 'OFF'}")
+            log.debug("[SIMULATION] vibreur %s", "ON" if on else "OFF")
 
-    def _do_pulse(self, duration: float, duty: int):
+    def _do_pulse(self, duration: float):
         self._set_on(True)
         self._stop_event.wait(timeout=duration)
         self._set_on(False)
 
-    def _do_pattern(self, on: float, off: float, reps: int, duty: int):
+    def _do_pattern(self, on: float, off: float, reps: int):
         for _ in range(reps):
             if self._stop_event.is_set():
                 break

@@ -1,18 +1,23 @@
 """
-heart_rate.py - Version DEBUG
+heart_rate.py
+-------------
+Lecture du rythme cardiaque via le capteur MAX30102 (I2C).
 """
 
 import time
 import threading
 import numpy as np
+from app_logger import get_logger
 from i2c_lock import i2c_lock
+
+log = get_logger(__name__)
 
 try:
     from scipy.signal import find_peaks, butter, filtfilt
     SCIPY_AVAILABLE = True
 except ImportError:
     SCIPY_AVAILABLE = False
-    print("⚠️  scipy non installé, calcul BPM dégradé")
+    log.warning("scipy non installe, calcul BPM degrade")
 
 MAX30102_ADDRESS  = 0x57
 REG_FIFO_WR_PTR  = 0x04
@@ -38,7 +43,7 @@ class MAX30102Driver:
             import smbus2
             self._bus = smbus2.SMBus(i2c_bus)
         except ImportError:
-            raise SystemExit("❌ smbus2 non installé")
+            raise SystemExit("smbus2 non installe")
 
         self._addr = MAX30102_ADDRESS
         part_id = self._read_byte(REG_PART_ID)
@@ -56,7 +61,6 @@ class MAX30102Driver:
 
     def _init_sensor(self):
         self._write_byte(REG_MODE_CONFIG, 0x40)
-        time.sleep(0.1)
         time.sleep(0.2)
         self._write_byte(REG_FIFO_CONFIG, 0x4F)
         time.sleep(0.2)
@@ -72,7 +76,7 @@ class MAX30102Driver:
         self._write_byte(REG_OVF_COUNTER, 0x00)
         self._write_byte(REG_FIFO_RD_PTR, 0x00)
         time.sleep(0.5)
-        print("✅ MAX30102 initialisé")
+        log.info("MAX30102 initialise")
 
     def get_data_count(self):
         with i2c_lock:
@@ -104,7 +108,8 @@ def _calc_bpm(ir_data):
     signal = np.array(ir_data[-FIFO_SAMPLES:], dtype=float)
     mean_ir = np.mean(signal)
 
-    print(f"[HR DEBUG] samples={len(ir_data)} | mean_IR={mean_ir:.0f} | doigt={'OUI' if mean_ir >= FINGER_THRESHOLD else 'NON'}")
+    log.debug("samples=%d | mean_IR=%.0f | doigt=%s",
+              len(ir_data), mean_ir, "OUI" if mean_ir >= FINGER_THRESHOLD else "NON")
 
     if mean_ir < FINGER_THRESHOLD:
         return 0.0, False
@@ -115,25 +120,25 @@ def _calc_bpm(ir_data):
         try:
             filtered = _bandpass_filter(signal, fs=SAMPLE_RATE)
             peaks, props = find_peaks(filtered, distance=27, prominence=0.3)
-            print(f"[HR DEBUG] pics trouvés={len(peaks)}")
+            log.debug("pics trouves=%d", len(peaks))
         except Exception as e:
-            print(f"[HR DEBUG] Erreur filtre : {e}")
+            log.debug("Erreur filtre : %s", e)
             peaks = []
     else:
         peaks = np.where(np.diff(np.sign(signal)) > 0)[0]
-        print(f"[HR DEBUG] passages zéro={len(peaks)}")
+        log.debug("passages zero=%d", len(peaks))
 
     if len(peaks) < 2:
-        print("[HR DEBUG] Pas assez de pics pour calculer BPM")
+        log.debug("Pas assez de pics pour calculer BPM")
         return 0.0, False
 
     intervals     = np.diff(peaks) / SAMPLE_RATE
     mean_interval = np.mean(intervals)
     bpm           = 60.0 / mean_interval
-    print(f"[HR DEBUG] intervalle moyen={mean_interval:.3f}s → BPM brut={bpm:.1f}")
+    log.debug("intervalle moyen=%.3fs -> BPM brut=%.1f", mean_interval, bpm)
 
     if not (40 <= bpm <= 200):
-        print(f"[HR DEBUG] BPM hors plage (40-200), ignoré")
+        log.debug("BPM hors plage (40-200), ignore")
         return 0.0, False
 
     return bpm, True
@@ -142,6 +147,7 @@ def _calc_bpm(ir_data):
 class HeartRateMonitor:
     def __init__(self, i2c_bus: int = 1, int_pin: int = 23):
         self._i2c_bus    = i2c_bus
+        self._int_pin    = int_pin
         self._thread     = None
         self._stop_event = threading.Event()
         self.bpm: float           = 0.0
@@ -151,19 +157,19 @@ class HeartRateMonitor:
         self._stop_event.clear()
         self._thread = threading.Thread(target=self._run, daemon=True, name="HR-Monitor")
         self._thread.start()
-        print(f"💓 HeartRateMonitor démarré (I2C bus={self._i2c_bus})")
+        log.info("HeartRateMonitor demarre (I2C bus=%d, INT pin=%d)", self._i2c_bus, self._int_pin)
 
     def stop(self):
         self._stop_event.set()
         if self._thread:
             self._thread.join(timeout=3.0)
-        print("💓 HeartRateMonitor arrêté.")
+        log.info("HeartRateMonitor arrete.")
 
     def _run(self):
         try:
             driver = MAX30102Driver(i2c_bus=self._i2c_bus)
         except Exception as e:
-            print(f"❌ Impossible d'initialiser le MAX30102 : {e}")
+            log.error("Impossible d'initialiser le MAX30102 : %s", e)
             return
 
         ir_data    = []
@@ -174,7 +180,7 @@ class HeartRateMonitor:
                 try:
                     count = driver.get_data_count()
                 except OSError as e:
-                    print(f'[HR] Erreur get_data_count: {e}')
+                    log.error("Erreur get_data_count : %s", e)
                     time.sleep(0.5)
                     continue
                 if count == 0:
@@ -187,7 +193,7 @@ class HeartRateMonitor:
                         ir_data.append(ir)
                         count -= 1
                     except Exception as e:
-                        print(f"[HR DEBUG] Erreur read_fifo : {e}")
+                        log.debug("Erreur read_fifo : %s", e)
                         break
 
                 if len(ir_data) > FIFO_SAMPLES * 3:
@@ -208,7 +214,7 @@ class HeartRateMonitor:
                         if len(bpm_buffer) > BPM_BUFFER_SIZE:
                             bpm_buffer.pop(0)
                         self.bpm = float(np.mean(bpm_buffer))
-                        print(f"💓 BPM = {self.bpm:.0f}")
+                        log.debug("BPM = %.0f", self.bpm)
 
         finally:
             driver.close()
