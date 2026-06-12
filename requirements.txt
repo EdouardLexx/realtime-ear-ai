@@ -1,0 +1,25 @@
+# ─────────────────────────────────────────────────────────────
+# Dependances du projet "Detection attention conducteur"
+# Installation : pip install -r requirements.txt
+# ─────────────────────────────────────────────────────────────
+
+# ── Coeur applicatif (PC + Raspberry Pi) ──
+opencv-python            # CamLive.py  -> cv2
+mediapipe                # CamLive.py  -> detection des landmarks visage
+numpy                    # calculs EAR / signal cardiaque
+mysql-connector-python   # db.py / simulate_db.py / test_db.py
+python-dotenv            # simulate_db.py / test_db.py -> .env
+
+# ── Optionnel ──
+pygame                   # CamLive.py  -> alerte sonore (degrade si absent)
+scipy                    # heart_rate.py -> filtrage / detection de pics (degrade si absent)
+
+# ─────────────────────────────────────────────────────────────
+# ── Raspberry Pi UNIQUEMENT (materiel I2C / GPIO) ──
+# Ces paquets ne s'installent pas sur un PC Windows : laisser
+# commente sur PC, decommenter sur le Raspberry Pi.
+# ─────────────────────────────────────────────────────────────
+# smbus2                          # heart_rate.py -> MAX30102 (I2C)
+# adafruit-blinka                 # board, busio
+# adafruit-circuitpython-ads1x15  # ads_reader.py -> ADS1115
+# lgpio                           # vibrator.py -> GPIO (PN2222A)
