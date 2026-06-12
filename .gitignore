@@ -7,7 +7,7 @@ __pycache__/
 requirements.txt
 
 # Fichier de log de debug (reecrase a chaque lancement)
-debug.log
+
 
 # C extensions
 *.so
